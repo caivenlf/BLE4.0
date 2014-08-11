@@ -21,4 +21,8 @@
     return self;
 }
 
+- (void)setNotifyForCharacteristic:(CBCharacteristic *)characteristic ByPeripheral:(CBPeripheral *)peripheral{
+    
+}
+
 @end

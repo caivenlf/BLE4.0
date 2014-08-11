@@ -8,12 +8,12 @@
 
 #import "PeripheralManager.h"
 #import "ServicesManager.h"
-#import "PeripheralManager.h"
+#import "CharacteristicManager.h"
 
 @interface PeripheralManager(){
   
     ServicesManager *serviceManager;
-    PeripheralManager *peripheralManager;
+    CharacteristicManager *characteristicManager;
 }
 @end
 
@@ -25,16 +25,16 @@
     self = [super init];
     if (self) {
         
-        peripheralManager = [[PeripheralManager alloc] init];
+        serviceManager = [[ServicesManager alloc] init];
+        characteristicManager = [[CharacteristicManager alloc] init];
     }
     return self;
 }
 
 - (void)startDiscoverService{
     
-    
-    serviceManager = [[ServicesManager alloc] init];
     [[serviceManager useableServices] removeAllObjects];
+    [[characteristicManager useableCharacteristics] removeAllObjects];
     [selectedPeripheral setDelegate:self];
     [selectedPeripheral discoverServices:nil];
 }
@@ -49,5 +49,6 @@
 
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     
+    [[characteristicManager useableCharacteristics] addObjectsFromArray:[service characteristics]];
 }
 @end

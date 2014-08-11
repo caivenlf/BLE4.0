@@ -12,4 +12,6 @@
 
 @property (nonatomic,strong)NSMutableArray *useableCharacteristics;
 
+- (void)setNotifyForCharacteristic:(CBCharacteristic *)characteristic ByPeripheral:(CBPeripheral *)peripheral;
+
 @end
