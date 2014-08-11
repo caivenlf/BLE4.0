@@ -13,8 +13,13 @@
 @interface BleConfig : NSObject
 
 /**
-    @func the service's uuid which will be searched/the ble sign
+ *  @func   the service's uuid which will be searched/the ble sign
  */
 + (NSArray *)searchServiceUUIDs;
 
+/**
+ *  @func   the character'uuids which should be setNotify
+ */
++ (NSArray *)setNotifyCharacteristicUUID;
++ (CBUUID *)writeCharacteristicUUID;
 @end

@@ -31,6 +31,7 @@
     return self;
 }
 
+#pragma mark - Self Method
 - (void)startDiscoverService{
     
     [[serviceManager useableServices] removeAllObjects];
@@ -39,6 +40,16 @@
     [selectedPeripheral discoverServices:nil];
 }
 
+- (void)writeData:(NSData *)data WithResponse:(BOOL)response{
+    
+    if (response) {
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeCharacteristic] type:CBCharacteristicWriteWithResponse];
+    }else{
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeCharacteristic] type:CBCharacteristicWriteWithoutResponse];
+    }
+}
+
+#pragma mark - CBPeripheralDelegate
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error{
     
     [[serviceManager useableServices] addObjectsFromArray:[peripheral services]];
@@ -50,5 +61,28 @@
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     
     [[characteristicManager useableCharacteristics] addObjectsFromArray:[service characteristics]];
+    [peripheral setNotifyValue:YES forCharacteristic:[characteristicManager notifyCharacteristic]];
+}
+
+- (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
+
+    returnbleReceiveData([characteristic value]);
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
+    
+}
+
+- (void) peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
+
+}
+
+#pragma mark - Blocks
+/**
+    @func Blocks
+ */
+- (void)bleReceiveData:(Block_receiveData)receiveData{
+    
+    returnbleReceiveData = receiveData;
 }
 @end

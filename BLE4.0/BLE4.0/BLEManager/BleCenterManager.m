@@ -60,55 +60,83 @@
     }
 }
 
+- (void)writeData:(NSData *)data WithResponse:(BOOL)response{
+    
+    [perpheralManager writeData:data WithResponse:response];
+}
+
 #pragma mark - Bluetooth Delegate
 //bluetoothCenterManger's delegate required
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central{
-    
+    bleState state;
     switch ([centralManager state]) {
         case CBCentralManagerStatePoweredOff:
-            returnBleState(PoweredOff);
+            state = PoweredOff;
             break;
         case CBCentralManagerStatePoweredOn:
-            returnBleState(PoweredOn);
+            state = PoweredOn;
             break;
         case CBCentralManagerStateUnsupported:
-            returnBleState(Unsupported);
+            state = Unsupported;
             break;
         case CBCentralManagerStateUnauthorized:
-            returnBleState(Unauthorized);
+            state = Unauthorized;
             break;
         case CBCentralManagerStateUnknown:
-            returnBleState(Unknown);
+            state = Unknown;
             break;
         case CBCentralManagerStateResetting:
-            returnBleState(Resetting);
+            state = Resetting;
             break;
         default:
+            state = Other;
             break;
+    }
+    if ([centralManager respondsToSelector:@selector(bleStateOn:)]) {
+        returnBleState(Resetting);
     }
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
-    returnBleDidDiscover(peripheral,advertisementData,RSSI);
+    if ([centralManager respondsToSelector:@selector(bleDidDiscover:)]) {
+        returnBleDidDiscover(peripheral,advertisementData,RSSI);
+    }
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
-    returnBleDidConnect(peripheral);
     perpheralManager = [[PeripheralManager alloc] init];
     perpheralManager.selectedPeripheral = peripheral;
     [perpheralManager startDiscoverService];
+    if ([centralManager respondsToSelector:@selector(bleDidConnect:)]) {
+        returnBleDidConnect(peripheral);
+    }
+    [self blePeripheralBlocks:perpheralManager];
+}
+
+- (void)blePeripheralBlocks:(PeripheralManager *)peripheralMan{
+    
+    [peripheralMan bleReceiveData:^(NSData *receiveData) {
+        if ([centralManager respondsToSelector:@selector(bleReceiveData:)]) {
+            returnBleReceiveData(receiveData);
+        }
+    }];
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
-    returnBleDidDisConnect(peripheral);
+    if ([centralManager respondsToSelector:@selector(bleDidDisConnect:)]) {
+        returnBleDidDisConnect(peripheral);
+    }
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
-    returnBleDidFailConnect(peripheral);
+    if ([centralManager respondsToSelector:@selector(bleDidFailConnect:)]) {
+        returnBleDidFailConnect(peripheral);
+    }
 }
 
+#pragma mark - Blocks
 /**
- *      @para   Blocks ->Required
+ *      @para   Blocks
  */
 - (void)bleStateOn:(Block_blePowerState)powerState{
     returnBleState = powerState;
@@ -124,6 +152,10 @@
 }
 - (void)bleDidDiscover:(Block_bleDidDiscover)didDiscover{
     returnBleDidDiscover = didDiscover;
+}
+
+- (void)bleReceiveData:(Block_receiveData)receiveData{
+    returnBleReceiveData = receiveData;
 }
 
 @end

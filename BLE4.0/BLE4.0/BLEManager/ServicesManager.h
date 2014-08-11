@@ -12,6 +12,9 @@
 
 @interface ServicesManager : NSObject
 
+/**
+ *  @para   allServices
+ */
 @property (nonatomic,strong) NSMutableArray *useableServices;
 
 /**

@@ -21,8 +21,25 @@
     return self;
 }
 
-- (void)setNotifyForCharacteristic:(CBCharacteristic *)characteristic ByPeripheral:(CBPeripheral *)peripheral{
+- (CBCharacteristic *)writeCharacteristic{
     
+    for (CBCharacteristic *characteristic in useableCharacteristics) {
+        if ([characteristic.UUID isEqual:[BleConfig writeCharacteristicUUID]]) {
+            return characteristic;
+        }
+    }
+    return nil;
 }
+
+- (CBCharacteristic *)notifyCharacteristic{
+    
+    for (CBCharacteristic *characteristic in useableCharacteristics) {
+        if ([[BleConfig setNotifyCharacteristicUUID] containsObject:characteristic.UUID]) {
+            return characteristic;
+        }
+    }
+    return nil;
+}
+
 
 @end

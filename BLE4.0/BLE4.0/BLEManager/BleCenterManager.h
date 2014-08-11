@@ -13,14 +13,17 @@
 #import "BleServicesAndCharacteristics.h"
 
 typedef enum {
-    PoweredOff,PoweredOn,Unsupported,Unauthorized,Unknown,Resetting
+    PoweredOff,PoweredOn,Unsupported,Unauthorized,Unknown,Resetting,Other
 }bleState;
 
+//Center
 typedef void (^Block_blePowerState)(bleState state);
 typedef void (^Block_bleDidConnect)(CBPeripheral *peripheral);
 typedef void (^Block_bleDidDisConnect)(CBPeripheral *peripheral);
 typedef void (^Block_bleDidFailConnect)(CBPeripheral *peripheral);
 typedef void (^Block_bleDidDiscover)(CBPeripheral *peripheral,NSDictionary *adverDic,NSNumber *rssi);
+//peripheral
+typedef void (^Block_receiveData)(NSData *receiveData);
 
 @interface BleCenterManager : NSObject<CBCentralManagerDelegate>{
     
@@ -29,6 +32,8 @@ typedef void (^Block_bleDidDiscover)(CBPeripheral *peripheral,NSDictionary *adve
     Block_bleDidDisConnect returnBleDidDisConnect;
     Block_bleDidDisConnect returnBleDidFailConnect;
     Block_bleDidDiscover returnBleDidDiscover;
+    
+    Block_receiveData returnBleReceiveData;
 }
 @property (nonatomic,strong)CBCentralManager *centralManager;
 
@@ -40,13 +45,16 @@ typedef void (^Block_bleDidDiscover)(CBPeripheral *peripheral,NSDictionary *adve
 - (void)stopScan;
 - (void)connectPeripheral:(CBPeripheral*)peripheral;
 - (void)disConnectPeripheral;
+- (void)writeData:(NSData *)data WithResponse:(BOOL)response;
 
 /**
- *  @func (Required) blocks
+ *  @func  blocks
  */
 - (void)bleStateOn:(Block_blePowerState)powerState;
 - (void)bleDidConnect:(Block_bleDidConnect)didConnect;
 - (void)bleDidDisConnect:(Block_bleDidDisConnect)didDisConnect;
 - (void)bleDidFailConnect:(Block_bleDidFailConnect)didFailConnect;
 - (void)bleDidDiscover:(Block_bleDidDiscover)didDiscover;
+
+- (void)bleReceiveData:(Block_receiveData)receiveData;
 @end

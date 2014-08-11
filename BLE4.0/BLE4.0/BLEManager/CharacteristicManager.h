@@ -8,10 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
+#import "BleConfig.h"
 @interface CharacteristicManager : NSObject
 
-@property (nonatomic,strong)NSMutableArray *useableCharacteristics;
 
-- (void)setNotifyForCharacteristic:(CBCharacteristic *)characteristic ByPeripheral:(CBPeripheral *)peripheral;
+/**
+ *  @para   allCharacteristics
+ */
+@property (nonatomic,strong)NSMutableArray *useableCharacteristics;
+@property (nonatomic,strong)CBCharacteristic *writeCharacteristic;
+@property (nonatomic,strong)CBCharacteristic *notifyCharacteristic;
+
 
 @end
