@@ -37,21 +37,11 @@
 - (void)bleDelegateObjc{
     
     [[BleCenterManager sharedInstance] startScan];
-    [[BleCenterManager sharedInstance] bleStateOn:^(bleState state) {
-        if (state == PoweredOn) {
-            NSLog(@"hahah");
-        }
-    }];
+    
     [[BleCenterManager sharedInstance] bleDidDiscover:^(CBPeripheral *peripheral, NSDictionary *adverDic, NSNumber *rssi) {
         [devices addObject:peripheral];
         NSLog(@"%@",[peripheral name]);
         [self.tableView reloadData];
-    }];
-    [[BleCenterManager sharedInstance] bleDidConnect:^(CBPeripheral *peripheral) {
-        
-    }];
-    [[BleCenterManager sharedInstance] bleDidDisConnect:^(CBPeripheral *peripheral) {
-        
     }];
 }
 
@@ -70,6 +60,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    NSLog(@"%ld",[devices count]);
     return [devices count];
 }
 

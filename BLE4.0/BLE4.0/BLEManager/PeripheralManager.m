@@ -7,8 +7,6 @@
 //
 
 #import "PeripheralManager.h"
-#import "ServicesManager.h"
-#import "CharacteristicManager.h"
 
 @interface PeripheralManager(){
   
@@ -49,9 +47,32 @@
     }
 }
 
+- (void)writeOTAControlData:(NSData *)data WithResponse:(BOOL)response{
+    
+    if (response) {
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeOtaControlCharacteristic] type:CBCharacteristicWriteWithResponse];
+    }else{
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeOtaControlCharacteristic] type:CBCharacteristicWriteWithoutResponse];
+    }
+}
+
+- (void)writeOTAPacketData:(NSData *)data WithResponse:(BOOL)response{
+    
+    if (response) {
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeOtaPacketCharacteristic] type:CBCharacteristicWriteWithResponse];
+    }else{
+        [selectedPeripheral writeValue:data forCharacteristic:[characteristicManager writeOtaPacketCharacteristic] type:CBCharacteristicWriteWithoutResponse];
+    }
+}
+
+- (void)readCharacteristic:(characteristicType)type{
+    
+    [selectedPeripheral readValueForCharacteristic:[characteristicManager getCharacteristicByType:type]];
+}
+
 #pragma mark - CBPeripheralDelegate
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error{
-    
+    if (error) {return;}
     [[serviceManager useableServices] addObjectsFromArray:[peripheral services]];
     for (CBService *curService in [serviceManager useableServices]){
         [peripheral discoverCharacteristics:nil forService:curService];
@@ -59,22 +80,23 @@
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
-    
+    if (error) {return;}
     [[characteristicManager useableCharacteristics] addObjectsFromArray:[service characteristics]];
     [peripheral setNotifyValue:YES forCharacteristic:[characteristicManager notifyCharacteristic]];
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
-
-    returnbleReceiveData([characteristic value]);
+    if (error) {return;}
+    returnbleReceiveData([characteristic value],characteristic);
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
-    
+    if (error) {return;}
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
-
+    if (error) {return;}
+    returnbleWriteData(characteristic);
 }
 
 #pragma mark - Blocks
@@ -84,5 +106,10 @@
 - (void)bleReceiveData:(Block_receiveData)receiveData{
     
     returnbleReceiveData = receiveData;
+}
+
+- (void)bleWriteData:(Block_writeData)writeData{
+    
+    returnbleWriteData = writeData;
 }
 @end

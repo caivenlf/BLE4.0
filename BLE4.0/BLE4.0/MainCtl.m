@@ -7,6 +7,8 @@
 //
 
 #import "MainCtl.h"
+#import "BleCenterManager.h"
+#import "OTAUpdateSys.h"
 
 @interface MainCtl ()
 
@@ -26,7 +28,26 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    [[BleCenterManager sharedInstance] bleStateOn:^(bleState state) {
+        if (state == PoweredOn) {
+            NSLog(@"hahah");
+        }
+    }];
+    [[BleCenterManager sharedInstance] bleDidConnect:^(CBPeripheral *peripheral) {
+        
+    }];
+    [[BleCenterManager sharedInstance] bleDidDisConnect:^(CBPeripheral *peripheral) {
+        
+    }];
+    [[BleCenterManager sharedInstance] bleReceiveData:^(NSData *receiveData,CBCharacteristic *characteristic) {
+        NSLog(@"Characteristic->%@",characteristic);
+        NSLog(@"ReceiveData->%@",receiveData);
+    }];
+    [[BleCenterManager sharedInstance] bleWriteData:^(CBCharacteristic *characteristic) {
+        
+        NSLog(@"Write Data Success");
+    }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -35,15 +56,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (IBAction)sendMessage:(id)sender {
+    
+    [[OTAUpdateSys shareInstance] getStart];
 }
-*/
+
 
 @end

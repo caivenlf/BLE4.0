@@ -50,7 +50,9 @@
 }
 
 -(void)connectPeripheral:(CBPeripheral*)peripheral{
-    
+    if (perpheralManager.selectedPeripheral) {
+        [centralManager cancelPeripheralConnection:perpheralManager.selectedPeripheral];
+    }
     [centralManager connectPeripheral:peripheral options:nil];
 }
 
@@ -63,6 +65,21 @@
 - (void)writeData:(NSData *)data WithResponse:(BOOL)response{
     
     [perpheralManager writeData:data WithResponse:response];
+}
+
+- (void)writeOTAControlData:(NSData *)data WithResponse:(BOOL)response{
+    
+    [perpheralManager writeOTAControlData:data WithResponse:response];
+}
+
+- (void)writeOTAPacketData:(NSData *)data WithResponse:(BOOL)response{
+    
+    [perpheralManager writeOTAPacketData:data WithResponse:response];
+}
+
+- (void)readValue:(characteristicType)type{
+    
+    [perpheralManager readCharacteristic:type];
 }
 
 #pragma mark - Bluetooth Delegate
@@ -92,13 +109,13 @@
             state = Other;
             break;
     }
-    if ([centralManager respondsToSelector:@selector(bleStateOn:)]) {
-        returnBleState(Resetting);
+    if (returnBleState) {
+        returnBleState(state);
     }
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
-    if ([centralManager respondsToSelector:@selector(bleDidDiscover:)]) {
+    if (returnBleDidDiscover) {
         returnBleDidDiscover(peripheral,advertisementData,RSSI);
     }
 }
@@ -107,7 +124,7 @@
     perpheralManager = [[PeripheralManager alloc] init];
     perpheralManager.selectedPeripheral = peripheral;
     [perpheralManager startDiscoverService];
-    if ([centralManager respondsToSelector:@selector(bleDidConnect:)]) {
+    if (returnBleDidConnect) {
         returnBleDidConnect(peripheral);
     }
     [self blePeripheralBlocks:perpheralManager];
@@ -115,21 +132,26 @@
 
 - (void)blePeripheralBlocks:(PeripheralManager *)peripheralMan{
     
-    [peripheralMan bleReceiveData:^(NSData *receiveData) {
-        if ([centralManager respondsToSelector:@selector(bleReceiveData:)]) {
-            returnBleReceiveData(receiveData);
+    [perpheralManager bleReceiveData:^(NSData *receiveData, CBCharacteristic *characteristic) {
+        if (returnBleReceiveData) {
+            returnBleReceiveData(receiveData,characteristic);
+        }
+    }];
+    [perpheralManager bleWriteData:^(CBCharacteristic *characteristic) {
+        if (returnbleWriteData) {
+            returnbleWriteData(characteristic);
         }
     }];
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
-    if ([centralManager respondsToSelector:@selector(bleDidDisConnect:)]) {
+    if (returnBleDidDisConnect) {
         returnBleDidDisConnect(peripheral);
     }
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
-    if ([centralManager respondsToSelector:@selector(bleDidFailConnect:)]) {
+    if (returnBleDidFailConnect) {
         returnBleDidFailConnect(peripheral);
     }
 }
@@ -156,6 +178,9 @@
 
 - (void)bleReceiveData:(Block_receiveData)receiveData{
     returnBleReceiveData = receiveData;
+}
+- (void)bleWriteData:(Block_writeData)writeData{
+    returnbleWriteData = writeData;
 }
 
 @end

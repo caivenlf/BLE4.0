@@ -27,6 +27,8 @@
 		312B604E199863E500D3C3E9 /* MainCtl.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B604D199863E500D3C3E9 /* MainCtl.m */; };
 		312B6051199867A600D3C3E9 /* PeripheralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B6050199867A600D3C3E9 /* PeripheralManager.m */; };
 		312B60561998A73C00D3C3E9 /* CharacteristicManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 312B60551998A73C00D3C3E9 /* CharacteristicManager.m */; };
+		31A500E81999F403002C90D5 /* OTAUpdateSys.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A500E71999F403002C90D5 /* OTAUpdateSys.m */; };
+		31A500EC199A0177002C90D5 /* ble_app_ancs.bin in Resources */ = {isa = PBXBuildFile; fileRef = 31A500EB199A0177002C90D5 /* ble_app_ancs.bin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,9 @@
 		312B6050199867A600D3C3E9 /* PeripheralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeripheralManager.m; sourceTree = "<group>"; };
 		312B60541998A73C00D3C3E9 /* CharacteristicManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacteristicManager.h; sourceTree = "<group>"; };
 		312B60551998A73C00D3C3E9 /* CharacteristicManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CharacteristicManager.m; sourceTree = "<group>"; };
+		31A500E61999F403002C90D5 /* OTAUpdateSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTAUpdateSys.h; sourceTree = "<group>"; };
+		31A500E71999F403002C90D5 /* OTAUpdateSys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTAUpdateSys.m; sourceTree = "<group>"; };
+		31A500EB199A0177002C90D5 /* ble_app_ancs.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = ble_app_ancs.bin; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +136,8 @@
 		312B600F199862A100D3C3E9 /* BLE4.0 */ = {
 			isa = PBXGroup;
 			children = (
+				31A500EB199A0177002C90D5 /* ble_app_ancs.bin */,
+				31A500E51999F3EA002C90D5 /* Handler */,
 				312B603E199862C800D3C3E9 /* BLEManager */,
 				312B6018199862A100D3C3E9 /* AppDelegate.h */,
 				312B6019199862A100D3C3E9 /* AppDelegate.m */,
@@ -190,6 +197,23 @@
 				312B6045199862D500D3C3E9 /* BleServicesAndCharacteristics.h */,
 			);
 			path = BLEManager;
+			sourceTree = "<group>";
+		};
+		31A500E51999F3EA002C90D5 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				31A500ED199A1323002C90D5 /* StateMachine */,
+				31A500E61999F403002C90D5 /* OTAUpdateSys.h */,
+				31A500E71999F403002C90D5 /* OTAUpdateSys.m */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		31A500ED199A1323002C90D5 /* StateMachine */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = StateMachine;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,6 +301,7 @@
 			files = (
 				312B6022199862A100D3C3E9 /* Images.xcassets in Resources */,
 				312B6014199862A100D3C3E9 /* InfoPlist.strings in Resources */,
+				31A500EC199A0177002C90D5 /* ble_app_ancs.bin in Resources */,
 				312B601D199862A100D3C3E9 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				312B60561998A73C00D3C3E9 /* CharacteristicManager.m in Sources */,
+				31A500E81999F403002C90D5 /* OTAUpdateSys.m in Sources */,
 				312B6048199862D500D3C3E9 /* BleConfig.m in Sources */,
 				312B6047199862D500D3C3E9 /* ServicesManager.m in Sources */,
 				312B6046199862D500D3C3E9 /* BleCenterManager.m in Sources */,

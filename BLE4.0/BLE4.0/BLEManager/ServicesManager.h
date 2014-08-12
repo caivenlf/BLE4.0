@@ -18,9 +18,12 @@
 @property (nonatomic,strong) NSMutableArray *useableServices;
 
 /**
- @func -> the service's uuid which will be searched
+ @func the service's uuid which will be searched
  */
 + (NSArray *)getTargetServiceUUID;
+/**
+ *  @func get service by uuid
+ */
 - (CBService*)getServiceByUUID:(CBUUID*)uuid;
 
 @end

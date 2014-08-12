@@ -8,22 +8,28 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
+#import "ServicesManager.h"
+#import "CharacteristicManager.h"
 
-typedef void (^Block_receiveData)(NSData *receiveData);
+typedef void (^Block_receiveData)(NSData *receiveData,CBCharacteristic *characteristic);
+typedef void (^Block_writeData)(CBCharacteristic *characteristic);
 
 @interface PeripheralManager : NSObject<CBPeripheralDelegate>{
     
     Block_receiveData returnbleReceiveData;
+    Block_writeData returnbleWriteData;
 }
 
 @property (nonatomic,strong)CBPeripheral *selectedPeripheral;
 
 - (void)startDiscoverService;
+- (void)readCharacteristic:(characteristicType)type;
 - (void)writeData:(NSData *)data WithResponse:(BOOL)response;
-
-
+- (void)writeOTAControlData:(NSData *)data WithResponse:(BOOL)response;
+- (void)writeOTAPacketData:(NSData *)data WithResponse:(BOOL)response;
 /**
  *  @func Blocks
  */
 - (void)bleReceiveData:(Block_receiveData)receiveData;
+- (void)bleWriteData:(Block_writeData)writeData;
 @end
