@@ -31,9 +31,12 @@ typedef enum {
  */
 + (CBUUID *)writeCharacteristicUUID;
 /**
- *  @func the otaCharacter's uuids which should be write
+ *  @func the otaControlCharacter's uuids which should be write
  */
 + (CBUUID *)writeOtaControlCharacteristicUUID;
+/**
+ *  @func the otaControlCharacter's uuids which should be write
+ */
 + (CBUUID *)writeOtaPacketCharacteristicUUID;
 /**
     @func   get the standard characteristic's uuid

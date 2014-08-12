@@ -23,28 +23,23 @@
 
 - (CBCharacteristic *)writeCharacteristic{
     
-    for (CBCharacteristic *characteristic in useableCharacteristics) {
-        if ([characteristic.UUID isEqual:[BleConfig writeCharacteristicUUID]]) {
-            return characteristic;
-        }
-    }
-    return nil;
+    return [self getCharacteristicFromUUID:[BleConfig writeCharacteristicUUID]];
 }
 
 - (CBCharacteristic *)writeOtaControlCharacteristic{
     
-    for (CBCharacteristic *characteristic in useableCharacteristics) {
-        if ([characteristic.UUID isEqual:[BleConfig writeOtaControlCharacteristicUUID]]) {
-            return characteristic;
-        }
-    }
-    return nil;
+    return [self getCharacteristicFromUUID:[BleConfig writeOtaControlCharacteristicUUID]];
 }
 
 - (CBCharacteristic *)writeOtaPacketCharacteristic{
     
+    return [self getCharacteristicFromUUID:[BleConfig writeOtaPacketCharacteristicUUID]];
+}
+
+- (CBCharacteristic *)getCharacteristicFromUUID:(CBUUID *)uuid{
+    
     for (CBCharacteristic *characteristic in useableCharacteristics) {
-        if ([characteristic.UUID isEqual:[BleConfig writeOtaPacketCharacteristicUUID]]) {
+        if ([characteristic.UUID isEqual:uuid]) {
             return characteristic;
         }
     }
@@ -64,7 +59,6 @@
 - (CBCharacteristic *)getCharacteristicByType:(characteristicType)type{
     
     CBUUID *typeCharacteristicUUID = [BleConfig standardCharacteristicUUID:type];
-    
     for (CBCharacteristic *characteristic in useableCharacteristics) {
         if ([characteristic.UUID isEqual:typeCharacteristicUUID]) {
             return characteristic;

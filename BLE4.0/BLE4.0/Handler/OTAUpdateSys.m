@@ -57,22 +57,27 @@
     
     [[BleCenterManager sharedInstance] bleReceiveData:^(NSData *receiveData, CBCharacteristic *characteristic) {
         
-        if (sendStage == 1) {
-            [self sendReceiveCommand];
-            sendStage = 2;
-        }else if (sendStage==3){
-            [self sendFirmwareChunk];
+        if (sendStage == 2) {
+            //            [self sendReceiveCommand];
+            [self sendCommandAtStage:sendStage];
+            sendStage = 3;
+        }else if (sendStage==4){
+            //            [self sendFirmwareChunk];
+            [self sendCommandAtStage:sendStage];
         }
+        
         NSLog(@"%@",receiveData);
     }];
     [[BleCenterManager sharedInstance] bleWriteData:^(CBCharacteristic *characteristic) {
         
-        if (sendStage==0) {
-            [self sendStartCommand:appSize];
-            sendStage = 1;
-        }else if (sendStage==2){
-            [self sendFirmwareChunk];
-            sendStage = 3;
+        if (sendStage==1) {
+            //            [self sendStartCommand:appSize];
+            [self sendCommandAtStage:sendStage];
+            sendStage = 2;
+        }else if (sendStage==3){
+            //            [self sendFirmwareChunk];
+            [self sendCommandAtStage:sendStage];
+            sendStage = 4;
         }
     }];
 }
@@ -82,8 +87,19 @@
     switch (stage) {
         case 0:
             [self sendNotificationRequest:notificationPacketInterval];
+            sendStage = 1;
             break;
-            
+        case 1:
+            [self sendStartCommand:appSize];
+        case 2:
+            [self sendReceiveCommand];
+            break;
+        case 3:
+            [self sendFirmwareChunk];
+            break;
+        case 4:
+            [self sendFirmwareChunk];
+            break;
         default:
             break;
     }
@@ -109,6 +125,7 @@
 }
 
 - (void) sendReceiveCommand{
+    
     dfu_control_point_data_t data;
     data.opcode = RECEIVE_FIRMWARE_IMAGE;
     NSData *commandData = [NSData dataWithBytes:&data length:1];
@@ -116,10 +133,10 @@
 }
 
 - (void) sendFirmwareChunk{
+    
     int currentDataSent = 0;
     for (int i = 0; i < notificationPacketInterval && firmwareDataBytesSent < appSize; i++){
         unsigned long length = (appSize - firmwareDataBytesSent) > MAX_PACKET_SIZE ? MAX_PACKET_SIZE : appSize-firmwareDataBytesSent;
-        
         NSRange currentRange = NSMakeRange(firmwareDataBytesSent, length);
         NSData *currentData = [watchFileData subdataWithRange:currentRange];
         [[BleCenterManager sharedInstance] writeOTAPacketData:currentData WithResponse:NO];
