@@ -49,33 +49,40 @@
 
 - (void)getStart{
     [self bleBlocks];
+    firmwareDataBytesSent = 0;
     sendStage = 0;
     [self sendCommandAtStage:sendStage];
+}
+
+- (void)getProgeress:(Block_otaUpdateProgress)progress{
+    
+    returnProgress = progress;
 }
 
 - (void)bleBlocks{
     
     [[BleCenterManager sharedInstance] bleReceiveData:^(NSData *receiveData, CBCharacteristic *characteristic) {
         
+        dfu_control_point_data_t *packet = (dfu_control_point_data_t *) characteristic.value.bytes;
         if (sendStage == 2) {
-            //            [self sendReceiveCommand];
             [self sendCommandAtStage:sendStage];
             sendStage = 3;
         }else if (sendStage==4){
-            //            [self sendFirmwareChunk];
+            if (packet->original == RECEIVE_FIRMWARE_IMAGE) {
+                [self sendValidateCommand];
+                sendStage = 5;
+            }else{
+                sendStage = 4;
+            }
             [self sendCommandAtStage:sendStage];
         }
-        
-        NSLog(@"%@",receiveData);
     }];
     [[BleCenterManager sharedInstance] bleWriteData:^(CBCharacteristic *characteristic) {
         
         if (sendStage==1) {
-            //            [self sendStartCommand:appSize];
             [self sendCommandAtStage:sendStage];
             sendStage = 2;
         }else if (sendStage==3){
-            //            [self sendFirmwareChunk];
             [self sendCommandAtStage:sendStage];
             sendStage = 4;
         }
@@ -99,6 +106,9 @@
             break;
         case 4:
             [self sendFirmwareChunk];
+            break;
+        case 5:
+            [self sendResetAndActivate];
             break;
         default:
             break;
@@ -124,7 +134,7 @@
     [[BleCenterManager sharedInstance] writeOTAPacketData:sizeData WithResponse:NO];
 }
 
-- (void) sendReceiveCommand{
+- (void)sendReceiveCommand{
     
     dfu_control_point_data_t data;
     data.opcode = RECEIVE_FIRMWARE_IMAGE;
@@ -143,5 +153,22 @@
         firmwareDataBytesSent += length;
         currentDataSent += length;
     }
+    returnProgress(firmwareDataBytesSent*1.0/appSize);
+}
+
+- (void) sendValidateCommand{
+    
+    dfu_control_point_data_t data;
+    data.opcode = VALIDATE_FIRMWARE;
+    NSData *commandData = [NSData dataWithBytes:&data length:1];
+    [[BleCenterManager sharedInstance] writeOTAControlData:commandData WithResponse:YES];
+}
+
+- (void) sendResetAndActivate{
+    
+    dfu_control_point_data_t data;
+    data.opcode = ACTIVATE_RESET;
+    NSData *commandData = [NSData dataWithBytes:&data length:1];
+    [[BleCenterManager sharedInstance] writeOTAControlData:commandData WithResponse:YES];
 }
 @end

@@ -29,6 +29,4 @@
  */
 - (CBCharacteristic *)getCharacteristicByType:(characteristicType)type;
 
-
-
 @end

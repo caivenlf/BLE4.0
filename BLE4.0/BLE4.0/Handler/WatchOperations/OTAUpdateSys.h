@@ -20,15 +20,23 @@ typedef struct __attribute__((packed)){
 } dfu_control_point_data_t;
 
 typedef enum{
-    START_DFU = 0x01,RECEIVE_FIRMWARE_IMAGE = 0x03,REQUEST_RECEIPT = 0x08
+    START_DFU = 0x01,RECEIVE_FIRMWARE_IMAGE = 0x03,VALIDATE_FIRMWARE= 0x04,ACTIVATE_RESET = 0x05,REQUEST_RECEIPT = 0x08
 }Opcode;
+/**
+    @para progress blocks
+ */
+typedef void (^Block_otaUpdateProgress)(float progress);
+
 
 #import <Foundation/Foundation.h>
 #import "BleCenterManager.h"
 
-@interface OTAUpdateSys : NSObject
+@interface OTAUpdateSys : NSObject{
+    
+    Block_otaUpdateProgress returnProgress;
+}
 
 + (id)shareInstance;
 - (void)getStart;
-
+- (void)getProgeress:(Block_otaUpdateProgress)progress;
 @end

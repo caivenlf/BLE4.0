@@ -9,6 +9,7 @@
 #import "MainCtl.h"
 #import "BleCenterManager.h"
 #import "OTAUpdateSys.h"
+#import "ReceiveHelper.h"
 
 @interface MainCtl ()
 
@@ -41,8 +42,7 @@
         
     }];
     [[BleCenterManager sharedInstance] bleReceiveData:^(NSData *receiveData,CBCharacteristic *characteristic) {
-        NSLog(@"Characteristic->%@",characteristic);
-        NSLog(@"ReceiveData->%@",receiveData);
+        [ReceiveHelper getOnePacketFromData:receiveData];
     }];
     [[BleCenterManager sharedInstance] bleWriteData:^(CBCharacteristic *characteristic) {
         
@@ -59,6 +59,9 @@
 - (IBAction)sendMessage:(id)sender {
     
     [[OTAUpdateSys shareInstance] getStart];
+    [[OTAUpdateSys shareInstance] getProgeress:^(float progress) {
+        NSLog(@"%lf",progress);
+    }];
 }
 
 
