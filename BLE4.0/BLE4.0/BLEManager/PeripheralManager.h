@@ -11,6 +11,8 @@
 #import "ServicesManager.h"
 #import "CharacteristicManager.h"
 
+#define LastPeripheraName   @"lastPeripheralName"
+
 typedef void (^Block_receiveData)(NSData *receiveData,CBCharacteristic *characteristic);
 typedef void (^Block_writeData)(CBCharacteristic *characteristic);
 
@@ -21,12 +23,14 @@ typedef void (^Block_writeData)(CBCharacteristic *characteristic);
 }
 
 @property (nonatomic,strong)CBPeripheral *selectedPeripheral;
+@property (nonatomic,strong)CBPeripheral *reReviewPeripheral;
 
 - (void)startDiscoverService;
 - (void)readCharacteristic:(characteristicType)type;
 - (void)writeData:(NSData *)data WithResponse:(BOOL)response;
 - (void)writeOTAControlData:(NSData *)data WithResponse:(BOOL)response;
 - (void)writeOTAPacketData:(NSData *)data WithResponse:(BOOL)response;
+- (CBPeripheral *)reReviewPeripheral:(NSArray *)reViewPeripherals;
 /**
  *  @func Blocks
  */

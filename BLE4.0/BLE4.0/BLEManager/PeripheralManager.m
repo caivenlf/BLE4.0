@@ -16,7 +16,7 @@
 @end
 
 @implementation PeripheralManager
-@synthesize selectedPeripheral;
+@synthesize selectedPeripheral,reReviewPeripheral;
 
 - (id)init{
     
@@ -68,6 +68,17 @@
 - (void)readCharacteristic:(characteristicType)type{
     
     [selectedPeripheral readValueForCharacteristic:[characteristicManager getCharacteristicByType:type]];
+}
+
+- (CBPeripheral *)reReviewPeripheral:(NSArray *)reViewPeripherals{
+    if([reViewPeripherals count]>0){
+        for(CBPeripheral *peripheral in reViewPeripherals){
+            if([[peripheral name] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:LastPeripheraName]]){
+                return peripheral;
+            }
+        }
+    }
+    return nil;
 }
 
 #pragma mark - CBPeripheralDelegate

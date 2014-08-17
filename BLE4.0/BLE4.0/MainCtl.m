@@ -25,7 +25,10 @@
     }
     return self;
 }
-
+- (void)viewWillAppear:(BOOL)animated{
+    
+    [[BleCenterManager sharedInstance] connectRetrivePeripheral];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -42,6 +45,7 @@
         
     }];
     [[BleCenterManager sharedInstance] bleReceiveData:^(NSData *receiveData,CBCharacteristic *characteristic) {
+        NSLog(@"%@",receiveData);
         [ReceiveHelper getOnePacketFromData:receiveData];
     }];
     [[BleCenterManager sharedInstance] bleWriteData:^(CBCharacteristic *characteristic) {

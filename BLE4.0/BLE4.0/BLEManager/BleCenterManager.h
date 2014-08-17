@@ -46,6 +46,7 @@ typedef void (^Block_writeData)(CBCharacteristic *characteristic);
 - (void)startScan;
 - (void)stopScan;
 - (void)connectPeripheral:(CBPeripheral*)peripheral;
+- (void)connectRetrivePeripheral;
 - (void)disConnectPeripheral;
 - (void)writeData:(NSData *)data WithResponse:(BOOL)response;
 - (void)writeOTAControlData:(NSData *)data WithResponse:(BOOL)response;

@@ -7,6 +7,7 @@
 //
 
 #import "BleCenterManager.h"
+#import "BleConfig.h"
 
 @interface BleCenterManager(){
     
@@ -54,6 +55,13 @@
         [centralManager cancelPeripheralConnection:perpheralManager.selectedPeripheral];
     }
     [centralManager connectPeripheral:peripheral options:nil];
+}
+
+- (void)connectRetrivePeripheral{
+    CBPeripheral *peripheral = [perpheralManager reReviewPeripheral:[centralManager retrieveConnectedPeripheralsWithServices:[BleConfig searchServiceUUIDs]]];
+    if (peripheral) {
+        [centralManager connectPeripheral:peripheral options:nil];
+    }
 }
 
 - (void)disConnectPeripheral{
@@ -121,6 +129,8 @@
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
+    [[NSUserDefaults standardUserDefaults]setObject:[peripheral name] forKey:LastPeripheraName];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     perpheralManager = [[PeripheralManager alloc] init];
     perpheralManager.selectedPeripheral = peripheral;
     [perpheralManager startDiscoverService];
@@ -148,6 +158,7 @@
     if (returnBleDidDisConnect) {
         returnBleDidDisConnect(peripheral);
     }
+    [self connectPeripheral:perpheralManager.selectedPeripheral];
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
